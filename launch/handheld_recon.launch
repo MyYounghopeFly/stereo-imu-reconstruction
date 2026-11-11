@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+  handheld_recon.launch
+  WSL/Linux 侧一键启动: VINS-Fusion + 实时稠密重建 + RViz
+
+  前提:
+  1. Windows 侧已运行 ros_publisher_stereo_imu.py (ROS_MASTER_URI 指向本机 WSL)
+  2. 已执行: python3 make_vins_config.py --scale 0.5 --outdir ./vins_config
+  3. VINS-Fusion 已 catkin_make 并 source devel/setup.bash
+
+  手动等价命令 (不用 roslaunch 时):
+    rosrun vins vins_node ./vins_config/handheld_stereo_imu_config.yaml &
+    python3 realtime_reconstruction.py &
+    rosrun vins_rviz vins_rviz   # 或 rviz
+-->
+<launch>
+  <arg name="vins_config" default="$(find handheld_recon)/vins_config/handheld_stereo_imu_config.yaml"/>
+
+  <!-- VINS-Fusion 位姿估计节点 -->
+  <node pkg="vins" type="vins_node" name="vins_estimator"
+        args="$(arg vins_config)" output="screen"/>
+
+  <!-- 实时稠密重建节点 -->
+  <node pkg="handheld_recon" type="realtime_reconstruction.py"
+        name="realtime_reconstruction" output="screen">
+    <param name="min_z" value="0.30"/>
+    <param name="max_z" value="2.50"/>
+    <param name="kf_trans" value="0.04"/>
+    <param name="kf_rot" value="4.0"/>
+    <param name="map_voxel" value="0.003"/>
+  </node>
+
+  <!-- RViz 可视化 -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find handheld_recon)/rviz/handheld_recon.rviz" required="false"/>
+</launch>

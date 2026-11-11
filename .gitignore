@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# 虚拟环境
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# 数据集与输出（大文件，不上传）
+SGM_dataset_serial/
+vins_output/
+
+# 系统文件
+Thumbs.db
+.DS_Store

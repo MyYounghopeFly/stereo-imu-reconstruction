@@ -1,0 +1,70 @@
+%YAML:1.0
+
+# ================= 话题 =================
+imu_topic: "/imu0"
+image0_topic: "/cam0/image_raw"
+image1_topic: "/cam1/image_raw"
+output_path: "/mnt/c/Users/12939/Desktop/stereo-imu-reconstruction/vins_output"
+
+# ================= 相机标定 =================
+model_type: PINHOLE
+num_of_cam: 2
+# 注意: VINS-Fusion 会将此值拼接到本配置文件所在目录后, 必须用相对文件名!
+cam0_calib: "handheld_cam0.yaml"
+cam1_calib: "handheld_cam1.yaml"
+image_width: 1224
+image_height: 1024
+
+# ============ IMU 开关与外参 ============
+# VINS-Fusion parameters.cpp: USE_IMU = fsSettings["imu"]
+imu: 1
+# 0: 固定使用 body_T_cam 给定外参不优化; 1: 以给定外参为初值在线优化; 2: 无先验从零在线标定(忽略 body_T_cam)
+estimate_extrinsic: 0
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ -9.997124000e-01, -2.384959000e-02, 2.513340000e-03, 1.109784000e-02, -1.561360000e-03, -3.985071000e-02, -9.992044200e-01, -7.513170000e-03, 2.393077000e-02, -9.989209800e-01, 3.980201000e-02, 1.512650000e-03, 0.000000000e+00, 0.000000000e+00, 0.000000000e+00, 1.000000000e+00 ]
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ -9.950235500e-01, 1.890120000e-03, 9.962209000e-02, -8.606677000e-02, -9.956281000e-02, -5.821226000e-02, -9.933270300e-01, -8.957940000e-03, 3.921720000e-03, -9.983024400e-01, 5.811076000e-02, 3.921370000e-03, 0.000000000e+00, 0.000000000e+00, 0.000000000e+00, 1.000000000e+00 ]
+
+multiple_thread: 1
+
+# ============ 特征跟踪前端 ============
+max_cnt: 150
+min_dist: 30
+freq: 15
+F_threshold: 1.0
+show_track: 0
+flow_back: 1
+
+# ============ 优化参数 ============
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+
+# ============ IMU 噪声 (HIPNUC 级 MEMS 典型值, 建议用 Allan 方差标定后替换) ============
+acc_n: 0.0204658
+gyr_n: 0.00247193
+acc_w: 0.000842205
+gyr_w: 5.07415e-05
+g_norm: 9.80665
+
+# ============ 时间同步 ============
+estimate_td: 1
+td: 0.0408
+
+rolling_shutter: 0
+rolling_shutter_tr: 0
+
+# ============ 可视化 ============
+save_image: 0
+visualize_imu_forward: 0
+visualize_camera_size: 0.4
+
+# ============ 回环检测 ============
+load_previous_pose_graph: 0
+pose_graph_save_path: "/mnt/c/Users/12939/Desktop/stereo-imu-reconstruction/vins_output/pose_graph.txt"
